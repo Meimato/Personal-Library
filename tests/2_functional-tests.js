@@ -41,6 +41,7 @@ suite("Functional Tests", function () {
           chai
             .request(server)
             .post("/api/books")
+            .send({})
             .end(function (err, res) {
               assert.equal(res.status, 200, "Response status should be 200");
               assert.equal(res.text, "missing required field title");
@@ -80,7 +81,7 @@ suite("Functional Tests", function () {
       test("Test GET /api/books/[id] with id not in db", function (done) {
         chai
           .request(server)
-          .get("/api/books/123456787654321")
+          .get("/api/books/62213d817732401897d8f2b1")
           .end(function (err, res) {
             assert.equal(res.text, "no book exists");
             done();
@@ -162,10 +163,10 @@ suite("Functional Tests", function () {
         test("Test POST /api/books/[id] with comment, id not in db", function (done) {
           chai
             .request(server)
-            .post("/api/books/88888888888888")
+            .post("/api/books/62213d817732401897d8f2b1")
             .send({ comment: "This book does not exist." })
             .end(function (err, res) {
-              assert.equal(res.body.error, "no book exists");
+              assert.equal(res.text, "no book exists");
               done();
             });
         });
@@ -188,7 +189,7 @@ suite("Functional Tests", function () {
               .request(server)
               .delete("/api/books/" + res.body._id)
               .end(function(err, data) {
-                assert.equal(data.body.message, 'delete successful');
+                assert.equal(data.text, 'delete successful');
                 done();
               });
           });
@@ -197,9 +198,9 @@ suite("Functional Tests", function () {
       test("Test DELETE /api/books/[id] with id not in db", function (done) {
         chai
           .request(server)
-          .delete("/api/books/88888888888888")
+          .delete("/api/books/62213d817732401897d8f2b1")
           .end(function(err, res) {
-            assert.equal(res.body.error, 'no book exists');
+            assert.equal(res.text, 'no book exists');
             done();
           });
       });
