@@ -12,10 +12,10 @@ const mongoose = require("mongoose");
 const Book = require("../models/Book");
 const BookSchema = require("../models/Book");
 
-module.exports = function(app) {
+module.exports = function (app) {
   app
     .route("/api/books")
-    .get(function(req, res) {
+    .get(function (req, res) {
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
       BookSchema.find({}).then((data) => {
@@ -23,7 +23,7 @@ module.exports = function(app) {
       });
     })
 
-    .post(function(req, res) {
+    .post(function (req, res) {
       if (!req.body.title) {
         return res.send("missing required field title");
       }
@@ -41,7 +41,7 @@ module.exports = function(app) {
     // User Story #6 - You can send a DELETE request to /api/books to delete all books in
     // the database. The returned response will be the string 'complete delete successful
     // if successful.
-    .delete(function(req, res) {
+    .delete(function (req, res) {
       //if successful response will be 'complete delete successful'
       BookSchema.deleteMany({})
         .then(() => res.send("complete delete successful"))
@@ -50,7 +50,7 @@ module.exports = function(app) {
 
   app
     .route("/api/books/:id")
-    .get(function(req, res) {
+    .get(function (req, res) {
       let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
       BookSchema.find({ _id: bookid })
@@ -58,13 +58,13 @@ module.exports = function(app) {
           res.json({
             title: book[0].title,
             _id: bookid,
-            comments: book[0].comments
+            comments: book[0].comments,
           });
         })
         .catch(() => res.send("no book exists"));
     })
 
-    .post(function(req, res) {
+    .post(function (req, res) {
       let bookid = req.params.id;
       let comment = req.body.comment;
 
@@ -85,42 +85,23 @@ module.exports = function(app) {
               return res.json({
                 title: result[0].title,
                 _id: bookid,
-                comments: result[0].comments
+                comments: result[0].comments,
               });
             });
           });
         })
         .catch((err) => res.send("no book exists"));
-      /* 
-      BookSchema.find({ _id: bookid }, function(err, data) {
-        const myComments = [...data[0].comments];
-        myComments.push(comment)
-        const myQuery = {
-          comments: myComments
-        }
-        BookSchema.findByIdAndUpdate(bookid, myQuery, function(err, datag) {
-          if (err) {
-            res.json(err)
-          }
-          console.log(datag)
-          res.json(datag);
-        });
-      }) */
     })
 
-    .delete(function(req, res) {
+    .delete(function (req, res) {
       let bookid = req.params.id;
       //if successful response will be 'delete successful'
-      BookSchema.findByIdAndDelete(bookid, null, function(err, data) {
+      BookSchema.findByIdAndDelete(bookid, null, function (err, data) {
         if (data === null) {
-          return res.send('no book exists');
+          return res.send("no book exists");
         } else {
-          return res.send('delete successful');
+          return res.send("delete successful");
         }
-      })
-      // .then(() => {
-      //   return res.send("delete successful");
-      // })
-      // .catch(() => { return res.send("no book exists") });
+      });
     });
 };
